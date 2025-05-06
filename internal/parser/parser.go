@@ -3,8 +3,8 @@ package parser
 import (
 	"strings"
 
+	"github.com/lwilanski/swift-codes-service/internal/models"
 	"github.com/xuri/excelize/v2"
-	"github.com/your-github-name/swift-codes-service/internal/models"
 )
 
 func ParseExcel(path string) ([]models.SwiftCode, error) {

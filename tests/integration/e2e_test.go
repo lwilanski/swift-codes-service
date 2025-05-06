@@ -1,10 +1,13 @@
-package test
+//go:build integration
+// +build integration
+
+package integration_test
 
 import (
 	"context"
 	"encoding/json"
 	"io"
-	"net/http"
+	stdhttp "net/http"
 	"testing"
 	"time"
 
@@ -12,15 +15,15 @@ import (
 	"github.com/testcontainers/testcontainers-go"
 	"github.com/testcontainers/testcontainers-go/wait"
 
-	"github.com/your-github-name/swift-codes-service/internal/db"
-	"github.com/your-github-name/swift-codes-service/internal/models"
-	"github.com/your-github-name/swift-codes-service/internal/repository"
-	"github.com/your-github-name/swift-codes-service/internal/transport/http"
+	"github.com/lwilanski/swift-codes-service/internal/db"
+	"github.com/lwilanski/swift-codes-service/internal/models"
+	"github.com/lwilanski/swift-codes-service/internal/repository"
+	th "github.com/lwilanski/swift-codes-service/internal/transport/http"
 )
 
 func TestEndToEnd(t *testing.T) {
 	ctx := context.Background()
-	pg, _ := testcontainers.GenericContainer(ctx, testcontainers.GenericContainerRequest{
+	pg, err := testcontainers.GenericContainer(ctx, testcontainers.GenericContainerRequest{
 		ContainerRequest: testcontainers.ContainerRequest{
 			Image:        "postgres:16",
 			ExposedPorts: []string{"5432/tcp"},
@@ -31,6 +34,7 @@ func TestEndToEnd(t *testing.T) {
 		},
 		Started: true,
 	})
+	require.NoError(t, err)
 	defer pg.Terminate(ctx)
 
 	host, _ := pg.Host(ctx)
@@ -39,19 +43,20 @@ func TestEndToEnd(t *testing.T) {
 	t.Setenv("PGHOST", host)
 	t.Setenv("PGPORT", port.Port())
 
-	// prepare DB
+	// DB + seed
 	conn, _ := db.Connect()
 	_ = conn.AutoMigrate(&models.SwiftCode{})
-	repo := repository.New(conn)
-	_ = repo.UpsertMany([]models.SwiftCode{
+	r := repository.New(conn)
+	_ = r.UpsertMany([]models.SwiftCode{
 		{SwiftCode: "AAISALTRXXX", CountryISO2: "AL", CountryName: "ALBANIA", BankName: "UBA", IsHeadquarter: true},
 	})
 
-	srv := http.Router(http.New(repo))
+	// start API
+	srv := th.Router(th.New(r))
 	go srv.Run(":8080")
-	time.Sleep(time.Second) // minimal wait for Gin to start
+	time.Sleep(time.Second) // krótki wait
 
-	res, err := http.Get("http://localhost:8080/v1/swift-codes/AAISALTRXXX")
+	res, err := stdhttp.Get("http://localhost:8080/v1/swift-codes/AAISALTRXXX")
 	require.NoError(t, err)
 	require.Equal(t, 200, res.StatusCode)
 

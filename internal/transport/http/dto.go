@@ -2,7 +2,7 @@ package http
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/your-github-name/swift-codes-service/internal/models"
+	"github.com/lwilanski/swift-codes-service/internal/models"
 )
 
 type branchDTO struct {

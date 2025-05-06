@@ -1,19 +1,23 @@
-package repository
+//go:build unit
+// +build unit
+
+package repository_test
 
 import (
 	"testing"
 
+	"github.com/lwilanski/swift-codes-service/internal/models"
+	repo "github.com/lwilanski/swift-codes-service/internal/repository"
 	"github.com/stretchr/testify/require"
-	"github.com/your-github-name/swift-codes-service/internal/models"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
 
-func makeRepo(t *testing.T) SwiftRepo {
+func makeRepo(t *testing.T) repo.SwiftRepo {
 	db, err := gorm.Open(sqlite.Open("file::memory:?cache=shared"), &gorm.Config{})
 	require.NoError(t, err)
 	require.NoError(t, db.AutoMigrate(&models.SwiftCode{}))
-	return New(db)
+	return repo.New(db)
 }
 
 func seed() []models.SwiftCode {

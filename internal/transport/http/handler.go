@@ -5,8 +5,8 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
-	"github.com/your-github-name/swift-codes-service/internal/models"
-	"github.com/your-github-name/swift-codes-service/internal/repository"
+	"github.com/lwilanski/swift-codes-service/internal/models"
+	"github.com/lwilanski/swift-codes-service/internal/repository"
 )
 
 type Handler struct{ repo repository.SwiftRepo }

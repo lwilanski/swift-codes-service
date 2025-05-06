@@ -1,7 +1,7 @@
 package repository
 
 import (
-	"github.com/your-github-name/swift-codes-service/internal/models"
+	"github.com/lwilanski/swift-codes-service/internal/models"
 
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
@@ -24,7 +24,8 @@ func (r SwiftRepo) Get(code string) (models.SwiftCode, error) {
 
 func (r SwiftRepo) GetBranches(root string) ([]models.SwiftCode, error) {
 	var res []models.SwiftCode
-	return res, r.db.Where("LEFT(swift_code,8)=? AND is_headquarter = false", root).
+	return res, r.db.
+		Where("swift_code LIKE ? AND is_headquarter = false", root+"%").
 		Find(&res).Error
 }
 

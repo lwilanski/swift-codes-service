@@ -3,11 +3,11 @@ package main
 import (
 	"log"
 
-	"github.com/your-github-name/swift-codes-service/internal/db"
-	"github.com/your-github-name/swift-codes-service/internal/models"
-	"github.com/your-github-name/swift-codes-service/internal/parser"
-	"github.com/your-github-name/swift-codes-service/internal/repository"
-	httptransport "github.com/your-github-name/swift-codes-service/internal/transport/http"
+	"github.com/lwilanski/swift-codes-service/internal/db"
+	"github.com/lwilanski/swift-codes-service/internal/models"
+	"github.com/lwilanski/swift-codes-service/internal/parser"
+	"github.com/lwilanski/swift-codes-service/internal/repository"
+	httptransport "github.com/lwilanski/swift-codes-service/internal/transport/http"
 )
 
 func main() {
